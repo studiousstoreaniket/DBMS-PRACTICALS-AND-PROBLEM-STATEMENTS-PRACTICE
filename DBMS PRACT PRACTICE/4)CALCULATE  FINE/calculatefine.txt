@@ -1,0 +1,50 @@
+sudo mysql -u root mysql
+
+create database bv;
+use bv;
+create table borrower (Roll_no int , Name varchar(10),DateofIssue date,NameofBook varchar(15),Status varchar(2));
+create table Fine(Roll_no int,Day int,Amt int);
+insert into borrower values(1,"Ajay","2021-03-30","DBMS","I");
+insert into borrower values(2,"Baban","2021-04-30","DS","I");
+insert into borrower values(3,"Chitra","2021-05-30","oops","I");
+insert into borrower values(4,"Diya","2021-06-3","CN","I");
+insert into borrower values(5,"Esha","2021-06-3","OS","I");
+insert into borrower values(6,"Reva","2021-07-15","OS","I");
+
+select * from borrower;
+select * from Fine;
+delimiter $$
+create procedure proc_lib(In roll Integer,In book_name varchar(20))
+begin
+declare no_of_days int;
+declare fine_amount int;
+declare issue_date date;
+set fine_amount:=0;
+select DateofIssue into issue_date from borrower where Roll_no=roll and NameofBook=book_name;
+select issue_date;
+select datediff(current_date,issue_date) into no_of_days from borrower where Roll_no=roll;
+select no_of_days;
+if no_of_days>=15 and no_of_days<=30
+then
+set fine_amount:=no_of_days*5;
+elseif no_of_days>30 then set fine_amount:=no_of_days*50;
+end if;
+update borrower set status="R" where Roll_no=roll;
+if fine_amount>=0 then
+insert into Fine values(roll,no_of_days,fine_amount);
+elseif fine_amount<0 then
+begin
+DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT "TABLE NOT FOUND";
+SELECT * FROM borrower;
+end;
+end if;
+end;
+$$
+
+call proc_lib(1,"DBMS");$$
+select * from borrower;$$
+select * from Fine;$$
+call proc_lib(6,"OS");$$
+select * from borrower;$$
+select * from Fine;$$
+

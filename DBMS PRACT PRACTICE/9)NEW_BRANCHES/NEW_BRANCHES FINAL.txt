@@ -1,0 +1,62 @@
+-- Step 1: Create the BRANCH_MSTR table
+CREATE TABLE BRANCH_MSTR (
+  BRANCH_ID   INT PRIMARY KEY,   -- Using INT for BRANCH_ID
+  BRANCH_NAME VARCHAR(100),      -- Using VARCHAR for variable-length string
+  LOCATION    VARCHAR(100)       -- Using VARCHAR for variable-length string
+);
+
+-- Step 2: Create the NEW_BRANCHES table
+CREATE TABLE NEW_BRANCHES (
+  BRANCH_ID   INT PRIMARY KEY,   -- Using INT for BRANCH_ID
+  BRANCH_NAME VARCHAR(100),      -- Using VARCHAR for variable-length string
+  LOCATION    VARCHAR(100)       -- Using VARCHAR for variable-length string
+);
+
+-- Step 3: Insert sample data into BRANCH_MSTR
+INSERT INTO BRANCH_MSTR (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (101, 'Main Branch', 'New York'),
+       (102, 'West Branch', 'Los Angeles');
+
+-- Commit the changes
+COMMIT;
+
+-- Step 4: Insert sample data into NEW_BRANCHES
+INSERT INTO NEW_BRANCHES (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (101, 'Main Branch', 'New York'),    -- This record already exists in BRANCH_MSTR
+       (103, 'South Branch', 'Miami'),       -- This record does not exist in BRANCH_MSTR
+       (104, 'East Branch', 'Chicago');      -- This record does not exist in BRANCH_MSTR
+
+-- Commit the changes
+COMMIT;
+
+-- Step 5: Create the stored procedure to merge data
+DELIMITER $$
+
+CREATE PROCEDURE merge_branches()
+BEGIN
+    -- Declare a variable to track the number of rows processed
+    DECLARE v_rows_processed INT DEFAULT 0;
+    
+    -- Merge data from NEW_BRANCHES into BRANCH_MSTR
+    -- Insert records that do not exist in BRANCH_MSTR
+    INSERT INTO BRANCH_MSTR (BRANCH_ID, BRANCH_NAME, LOCATION)
+    SELECT nb.BRANCH_ID, nb.BRANCH_NAME, nb.LOCATION
+    FROM NEW_BRANCHES nb
+    LEFT JOIN BRANCH_MSTR bm ON nb.BRANCH_ID = bm.BRANCH_ID
+    WHERE bm.BRANCH_ID IS NULL;  -- Only insert rows that do not already exist
+
+    -- Get the number of rows inserted (affected by the last INSERT query)
+    SET v_rows_processed = ROW_COUNT();
+    
+    -- Output the result (MySQL does not support DBMS_OUTPUT, so we use SELECT)
+    SELECT CONCAT(v_rows_processed, ' rows merged into BRANCH_MSTR') AS result;
+END$$
+
+DELIMITER ;
+
+-- Step 6: Call the stored procedure to merge data
+CALL merge_branches();
+
+-- Step 7: Check the results in BRANCH_MSTR
+SELECT * FROM BRANCH_MSTR;
+

@@ -1,0 +1,74 @@
+-- Step 1: Create the BRANCH_MSTR table with INT for BRANCH_ID
+CREATE TABLE BRANCH_MSTR (
+  BRANCH_ID   INT PRIMARY KEY,   
+  BRANCH_NAME VARCHAR(100),     
+  LOCATION    VARCHAR(100)      
+);
+
+-- Step 2: Create the NEW_BRANCHES table with INT for BRANCH_ID
+CREATE TABLE NEW_BRANCHES (
+  BRANCH_ID   INT PRIMARY KEY,   
+  BRANCH_NAME VARCHAR(100),     
+  LOCATION    VARCHAR(100)      
+);
+
+-- Step 3: Insert Sample Data into BRANCH_MSTR
+INSERT INTO BRANCH_MSTR (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (101, 'Main Branch', 'New York');
+
+-- Insert more records
+INSERT INTO BRANCH_MSTR (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (102, 'West Branch', 'Los Angeles');
+
+-- Commit the changes
+COMMIT;
+
+-- Step 4: Insert Sample Data into NEW_BRANCHES
+INSERT INTO NEW_BRANCHES (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (101, 'Main Branch', 'New York');  -- This record already exists in BRANCH_MSTR
+
+-- Insert more records
+INSERT INTO NEW_BRANCHES (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (103, 'South Branch', 'Miami');  -- This record does not exist in BRANCH_MSTR
+
+INSERT INTO NEW_BRANCHES (BRANCH_ID, BRANCH_NAME, LOCATION) 
+VALUES (104, 'East Branch', 'Chicago');  -- This record does not exist in BRANCH_MSTR
+
+-- Commit the changes
+COMMIT;
+
+-- Step 5: Enable DBMS_OUTPUT for displaying results
+-- In SQL*Plus or Oracle SQL Developer, you must enable DBMS_OUTPUT to display messages:
+-- Run the following command before running the PL/SQL block:
+-- SET SERVEROUTPUT ON;
+
+-- Step 6: PL/SQL Block to Merge Data
+DECLARE
+  -- Variable to track the number of rows processed
+  v_rows_processed INT := 0;
+BEGIN
+  -- Use the MERGE statement to insert data into BRANCH_MSTR from NEW_BRANCHES
+  MERGE INTO BRANCH_MSTR b
+  USING NEW_BRANCHES nb
+  ON (b.BRANCH_ID = nb.BRANCH_ID)  -- Matching condition based on BRANCH_ID
+  WHEN NOT MATCHED THEN
+    INSERT (BRANCH_ID, BRANCH_NAME, LOCATION) 
+    VALUES (nb.BRANCH_ID, nb.BRANCH_NAME, nb.LOCATION);
+    
+  -- Optionally, check how many rows were affected (inserted)
+  v_rows_processed := SQL%ROWCOUNT;
+
+  -- Output message to show how many rows were processed
+  DBMS_OUTPUT.PUT_LINE(v_rows_processed || ' rows merged into BRANCH_MSTR.');
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- In case of any errors, print the error message
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/
+
+-- Step 7: Check the Results in BRANCH_MSTR
+SELECT * FROM BRANCH_MSTR;
+
+

@@ -1,0 +1,76 @@
+DROP DATABASE Company;
+CREATE DATABASE Company;
+USE Company;
+
+CREATE TABLE Department (
+    DID INT PRIMARY KEY,
+    dname VARCHAR(50) NOT NULL,
+    MGRSSN CHAR(9),
+    MGRstartdate DATE
+);
+
+CREATE TABLE Employee (
+    Name VARCHAR(50),
+    SSN CHAR(9) PRIMARY KEY,
+    Address VARCHAR(100),
+    Salary INT,
+    Department INT,
+    DOB DATE,  
+    FOREIGN KEY (Department) REFERENCES Department(DID)
+);
+
+INSERT INTO Department (DID, dname, MGRSSN, MGRstartdate) VALUES
+(1, 'Research', '123456789', '2020-01-15'),
+(2, 'Accounts', '987654321', '2019-03-20'),
+(3, 'IT', '456789123', '2021-07-10'),
+(4, 'HR', '789123456', '2018-05-25'),
+(5, 'Management', '321654987', '2017-11-30');
+
+INSERT INTO Employee (Name, SSN, Address, Salary, Department, DOB) VALUES
+('Alice', '123456789', '123 Main St', 60000, 1, '1985-07-20'),
+('Bob', '987654321', '456 Oak St', 75000, 2, '1982-09-15'),
+('Charlie', '456789123', '789 Pine St', 80000, 3, '1990-03-10'),
+('Diana', '789123456', '321 Maple St', 50000, 4, '1995-11-25'),
+('Eve', '321654987', '654 Birch St', 95000, 5, '1988-12-30'),
+('Frank', '654321987', '213 Cedar St', 62000, 1, '1992-06-10'),
+('Grace', '321987654', '567 Elm St', 55000, 2, '1994-08-05'),
+('Henry', '147258369', '789 Walnut St', 70000, 5, '1993-01-17');
+
+SELECT * FROM Employee;
+
+SELECT * FROM Department;
+
+UPDATE Employee
+SET Salary = Salary * 1.10
+WHERE Department = (SELECT DID FROM Department WHERE dname = 'Research');
+
+SELECT 
+    SUM(Salary) AS TotalSalary,
+    MAX(Salary) AS MaxSalary,
+    MIN(Salary) AS MinSalary,
+    AVG(Salary) AS AverageSalary
+FROM Employee
+WHERE Department = (SELECT DID FROM Department WHERE dname = 'Accounts');
+
+SELECT Name
+FROM Employee
+WHERE EXISTS (
+    SELECT *
+    FROM Department
+    WHERE DID = 5 AND Employee.Department = Department.DID
+);
+
+
+SELECT Department.dname, COUNT(Employee.SSN) AS EmployeeCount
+FROM Department
+JOIN Employee ON Department.DID = Employee.Department
+GROUP BY Department.dname
+HAVING COUNT(Employee.SSN) >= 2;
+
+SELECT Name
+FROM Employee
+WHERE DOB BETWEEN '1990-01-01' AND '1999-12-31';
+
+SELECT Employee.Name, Department.dname
+FROM Employee
+JOIN Department ON Employee.Department = Department.DID;

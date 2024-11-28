@@ -1,0 +1,41 @@
+create database areaofcircle;
+use areaofcircle;
+create table areas(radius int,area int );
+
+DELIMITER $$  -- Change delimiter to allow multiple statements
+
+CREATE PROCEDURE calculate_areas()
+BEGIN
+    DECLARE v_radius INT;
+    DECLARE v_area INT;
+    
+    -- Loop through radius values from 5 to 9
+    SET v_radius = 5;
+    
+    WHILE v_radius <= 9 DO
+        -- Calculate the area using the formula: Area = π * radius^2
+        SET v_area = ROUND(3.14159 * (v_radius * v_radius));
+        
+        -- Insert the radius and calculated area into the areas table
+        INSERT INTO areas (radius, area)
+        VALUES (v_radius, v_area);
+        
+        -- Increment the radius value
+        SET v_radius = v_radius + 1;
+    END WHILE;
+    
+    -- Output a success message
+    SELECT 'Areas for radii 5 to 9 have been inserted successfully.' AS message;
+END$$
+
+DELIMITER ;  -- Reset delimiter back to the default semicolon
+
+
+--execute
+CALL calculate_areas();
+
+
+-- verify results 
+SELECT * FROM areas;
+
+

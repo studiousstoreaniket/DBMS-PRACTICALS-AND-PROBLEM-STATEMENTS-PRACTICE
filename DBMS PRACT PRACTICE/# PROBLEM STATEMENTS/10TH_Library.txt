@@ -1,0 +1,76 @@
+DROP DATABASE Library;
+
+CREATE DATABASE Library;
+
+USE Library;
+
+CREATE TABLE author (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    birth_year INT,
+    death_year INT NULL
+);
+
+CREATE TABLE book (
+    id INT PRIMARY KEY,
+    author_id INT,
+    title VARCHAR(100),
+    publish_year INT,
+    publishing_house VARCHAR(100),
+    rating DECIMAL(3, 2),
+    FOREIGN KEY (author_id) REFERENCES author(id)
+);
+
+CREATE TABLE adaptation (
+    book_id INT,
+    type VARCHAR(50),
+    title VARCHAR(100),
+    release_year INT,
+    rating DECIMAL(3, 2),
+    FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+CREATE TABLE book_review (
+    book_id INT,
+    review TEXT,
+    author VARCHAR(100),
+    FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+INSERT INTO author (id, name, birth_year, death_year) VALUES
+(1, 'George Orwell', 1903, 1950),
+(2, 'J.K. Rowling', 1965, NULL),
+(3, 'J.R.R. Tolkien', 1892, 1973);
+
+INSERT INTO book (id, author_id, title, publish_year, publishing_house, rating) VALUES
+(1, 1, '1984', 1949, 'Secker & Warburg', 4.8),
+(2, 2, 'Harry Potter and the Philosopher\'s Stone', 1997, 'Bloomsbury', 4.7),
+(3, 3, 'The Hobbit', 1937, 'George Allen & Unwin', 4.6);
+
+INSERT INTO adaptation (book_id, type, title, release_year, rating) VALUES
+(1, 'Movie', '1984', 1984, 4.2),
+(2, 'Movie', 'Harry Potter and the Philosopher\'s Stone', 2001, 4.5),
+(3, 'Movie', 'The Hobbit', 2012, 3.9);
+
+INSERT INTO book_review (book_id, review, author) VALUES
+(1, 'A dystopian novel that remains relevant today.', 'John Doe'),
+(2, 'A magical journey that captivated readers worldwide.', 'Jane Smith'),
+(3, 'An epic fantasy adventure that defines the genre.', 'Sam Brown');
+
+SELECT a.name AS Author, b.title AS Book_Title, b.publish_year AS Publish_Year
+FROM author a
+JOIN book b ON a.id = b.author_id;
+
+SELECT a.name AS Author, b.title AS Book_Title, b.publish_year AS Publish_Year
+FROM author a
+JOIN book b ON a.id = b.author_id
+WHERE b.publish_year > 2005;
+
+SELECT b.title AS Book_Title, a.title AS Adaptation_Title, a.release_year AS Adaptation_Year, b.publish_year AS Publish_Year
+FROM book b
+LEFT JOIN adaptation a ON b.id = a.book_id;
+
+SELECT b.title AS Book_Title, a.title AS Adaptation_Title, a.release_year AS Release_Year
+FROM book b
+LEFT JOIN adaptation a ON b.id = a.book_id;
+

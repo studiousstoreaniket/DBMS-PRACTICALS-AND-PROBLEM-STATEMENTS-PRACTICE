@@ -1,0 +1,54 @@
+DROP DATABASE Company;
+
+CREATE DATABASE Company;
+
+USE Company;
+
+CREATE TABLE EMPLOYEE (
+Emp_no INT PRIMARY KEY,
+E_name VARCHAR(50),
+E_address VARCHAR(100),
+E_ph_no VARCHAR(15),
+Dept_no INT,
+Dept_name VARCHAR(50),
+Job_id VARCHAR(20),
+Salary DECIMAL(10, 2),
+E_mail VARCHAR(100)
+);
+
+INSERT INTO EMPLOYEE (Emp_no, E_name, E_address, E_ph_no, Dept_no, Dept_name, Job_id, Salary, E_mail)
+VALUES
+(1, 'Amit Sharma', 'Mumbai', '9876543210', 10, 'HR', 'HR001', 5000.00, 'amit.sharma@mumbai.com'),
+(2, 'Rahul Mehta', 'Delhi', '9888776655', 20, 'IT', 'IT002', 6000.00, 'rahul.mehta@delhi.com'),
+(3, 'Priya Gupta', 'Bangalore', '9999888777', 10, 'HR', 'HR003', 4500.00, 'priya.gupta@bangalore.com'),
+(4, 'Vikram Reddy', 'Hyderabad', '9444332211', 30, 'Sales', 'SL001', 7000.00, 'vikram.reddy@hyderabad.com'),
+(5, 'Sneha Verma', 'Chennai', '9123456789', 20, 'IT', 'IT004', 8000.00, 'sneha.verma@chennai.com'),
+(6, 'Deepak Kumar', 'Pune', '9145632890', 40, 'MECH', 'MECH001', 5500.00, 'deepal.kum@pune.com');
+
+SELECT * FROM EMPLOYEE;
+
+SELECT * FROM EMPLOYEE
+WHERE Dept_no = 10;
+
+UPDATE EMPLOYEE
+SET E_address = 'Nagpur'
+WHERE Emp_no = 1;
+
+SELECT * FROM EMPLOYEE;
+
+SELECT * FROM EMPLOYEE
+WHERE Dept_no = 40;
+
+UPDATE EMPLOYEE
+SET E_ph_no = NULL
+WHERE E_name = 'Rahul Mehta';
+
+SELECT * FROM EMPLOYEE;
+
+ALTER TABLE EMPLOYEE
+DROP COLUMN E_mail;
+
+SELECT * FROM EMPLOYEE;
+
+SELECT * FROM EMPLOYEE
+WHERE Dept_no = 30;

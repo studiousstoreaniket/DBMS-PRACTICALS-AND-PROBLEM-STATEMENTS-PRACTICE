@@ -1,0 +1,42 @@
+DROP DATABASE Company;
+
+CREATE DATABASE Company;
+
+SHOW DATABASES;
+
+USE Company;
+
+SHOW TABLES;
+
+CREATE TABLE Department (
+DID INT PRIMARY KEY,
+dname VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Employee (
+Name VARCHAR(50) NOT NULL,
+SSN CHAR(9) PRIMARY KEY,
+Address VARCHAR(100),
+Salary INT,
+Department INT,
+FOREIGN KEY (Department) REFERENCES Department(DID)
+);
+
+INSERT INTO Department (DID, dname) VALUES (1, 'HR'), (2, 'IT'), (3, 'Finance');
+
+INSERT INTO Employee (Name, SSN, Address, Salary, Department) VALUES
+('Alice', '123456789', '123 Main St', 50000, 1),
+('Bob', '987654321', '456 Oak St', 60000, 2),
+('Charlie', '456789123', '789 Pine St', 70000, 3);
+
+SELECT * FROM Employee;
+
+SELECT * FROM Department;
+
+UPDATE Employee SET Salary = 55000 WHERE SSN = '123456789';
+
+DELETE FROM Employee WHERE SSN = '987654321';
+
+SELECT Employee.Name, Department.dname
+FROM Employee
+JOIN Department ON Employee.Department = Department.DID;

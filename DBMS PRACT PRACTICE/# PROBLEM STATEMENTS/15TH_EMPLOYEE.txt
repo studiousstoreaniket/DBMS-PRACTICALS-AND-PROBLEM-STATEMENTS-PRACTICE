@@ -1,0 +1,75 @@
+DROP DATABASE IF EXISTS EMPLOYEE;
+
+CREATE DATABASE EMPLOYEE;
+
+USE EMPLOYEE;
+
+CREATE TABLE EMPLOYEE (
+    Emp_no INT PRIMARY KEY,
+    E_name VARCHAR(50),
+    E_address VARCHAR(100),
+    E_ph_no VARCHAR(15),
+    Dept_no INT,
+    Dept_name VARCHAR(50),
+    Job_id VARCHAR(20),
+    Designation VARCHAR(50),
+    Salary DECIMAL(10, 2),
+    Join_date DATE
+);
+
+INSERT INTO EMPLOYEE (Emp_no, E_name, E_address, E_ph_no, Dept_no, Dept_name, Job_id, Designation, Salary, Join_date)
+VALUES
+(1, 'Amit Sharma', 'Delhi', '9876543210', 10, 'HR', 'HR001', 'Manager', 5000, '2023-10-15'),
+(2, 'Priya Verma', 'Mumbai', '9876554321', 20, 'IT', 'IT001', 'Developer', 4500, '2022-07-20'),
+(3, 'Ravi Kumar', 'Bangalore', '9876598765', 10, 'HR', 'HR002', 'Clerk', 2500, '2021-03-10'),
+(4, 'Sita Nair', 'Chennai', '9876622211', 30, 'Finance', 'FN001', 'Analyst', 4800, '2020-06-25'),
+(5, 'Rajesh Patel', 'Ahmedabad', '9876789012', 20, 'IT', 'IT002', 'IT Proff', 5500, '2019-09-13'),
+(6, 'Ankit Sharma', 'Delhi', '9876501234', 10, 'HR', 'HR003', 'Manager', 6000, '1981-05-01'),
+(7, 'Neha Gupta', 'Mumbai', '9876512345', 20, 'IT', 'IT003', 'Developer', 5000, '1981-12-03'),
+(8, 'Manish Patel', 'Ahmedabad', '9876523456', 30, 'Finance', 'FN003', 'Analyst', 4500, '1981-12-17'),
+(9, 'Pooja Rao', 'Bangalore', '9876534567', 40, 'Sales', 'SL003', 'Clerk', 2500, '1980-01-19'),
+(10, 'Harish Kumar', 'Kolkata', '9876554321', 10, 'HR', 'HR005', 'Manager', 5500, '2023-05-10'),
+(11, 'Karan Joshi', 'Pune', '9876543210', 20, 'IT', 'IT002', 'Developer', 4000, '2022-02-15');
+
+SELECT * FROM EMPLOYEE;
+
+SELECT Emp_no, E_name, Salary
+FROM EMPLOYEE
+WHERE Designation = 'Manager';
+
+SELECT * FROM EMPLOYEE
+WHERE Salary > (SELECT MAX(Salary) FROM EMPLOYEE WHERE Job_id = 'IT002');
+
+SELECT * FROM EMPLOYEE
+WHERE Join_date > '1981-01-01'
+ORDER BY Designation ASC;
+
+SELECT E_name, 
+       DATEDIFF(CURRENT_DATE, Join_date) / 365 AS Experience, 
+       Salary / 30 AS Daily_Salary
+FROM EMPLOYEE;
+
+SELECT E_name, Designation
+FROM EMPLOYEE
+WHERE Designation IN ('Clerk', 'Analyst');
+
+SELECT *
+FROM EMPLOYEE
+WHERE Join_date IN ('1981-05-01', '1981-12-03', '1981-12-17', '1980-01-19');
+
+SELECT E_name, Dept_no
+FROM EMPLOYEE
+WHERE Dept_no IN (10, 20);
+
+SELECT E_name
+FROM EMPLOYEE
+WHERE E_name LIKE 'S%';
+
+SELECT E_name, LEFT(E_name, 5) AS First_Five_Chars
+FROM EMPLOYEE
+WHERE E_name LIKE 'R%';
+
+SELECT E_name, Designation, Salary
+FROM EMPLOYEE
+WHERE Designation NOT IN ('President', 'MGR')
+ORDER BY Salary ASC;

@@ -1,0 +1,70 @@
+DROP DATABASE SHOP;
+
+CREATE DATABASE SHOP;
+
+USE SHOP;
+
+CREATE TABLE SHOPPE (
+    Id CHAR(3) PRIMARY KEY,
+    SName VARCHAR(50),
+    Area VARCHAR(20)
+);
+
+CREATE TABLE ACCESSORIES (
+    No CHAR(3) PRIMARY KEY,
+    Name VARCHAR(50),
+    Price INT,
+    Id CHAR(3),
+    FOREIGN KEY (Id) REFERENCES SHOPPE(Id)
+);
+
+INSERT INTO SHOPPE (Id, SName, Area) VALUES 
+    ('S01', 'ABC Computronics', 'CP'),
+    ('S02', 'All Infotech Media', 'GK II'),
+    ('S03', 'Tech Shoppe', 'Nehru Place'),
+    ('S04', 'Geeks Techno Soft', 'Nehru Place'),
+    ('S05', 'Hitech Tech Store', 'Nehru Place');
+
+INSERT INTO ACCESSORIES (No, Name, Price, Id) VALUES 
+    ('A01', 'Mother Board', 12000, 'S01'),
+    ('A02', 'Hard Disk', 5000, 'S01'),
+    ('A03', 'Keyboard', 500, 'S02'),
+    ('A04', 'Mouse', 3000, 'S03'),
+    ('A05', 'Mother Board', 13000, 'S02'),
+    ('A06', 'Keyboard', 4000, 'S03'),
+    ('A07', 'LCD', 6000, 'S04'),
+    ('A08', 'LCD', 5500, 'S05'),
+    ('A09', 'Mouse', 350, 'S05'),
+    ('A10', 'Hard Disk', 4500, 'S03');
+
+SELECT * FROM SHOPPE;
+SELECT * FROM ACCESSORIES;
+
+SELECT Name, Price 
+FROM ACCESSORIES 
+ORDER BY Price DESC;
+
+SELECT Id, SName 
+FROM SHOPPE 
+WHERE Area = 'Nehru Place';
+
+SELECT Name, MIN(Price) AS MinPrice, MAX(Price) AS MaxPrice 
+FROM ACCESSORIES 
+GROUP BY Name;
+
+SELECT ACCESSORIES.Name, ACCESSORIES.Price, SHOPPE.SName 
+FROM ACCESSORIES 
+JOIN SHOPPE ON ACCESSORIES.Id = SHOPPE.Id 
+WHERE ACCESSORIES.Price >= 5000;
+
+SELECT * FROM ACCESSORIES WHERE Name LIKE '%Board%';
+
+SELECT DISTINCT Name FROM ACCESSORIES WHERE Price > 5000;
+
+SELECT AREA, COUNT(*) FROM SHOPPE GROUP BY AREA;
+
+SELECT AVG(Price), MAX(Price) FROM ACCESSORIES WHERE Price >= 10000;
+
+SELECT Name, Price * 0.95 AS DISCOUNT FROM ACCESSORIES WHERE Id IN ('S02', 'S03');
+
+SELECT * FROM SHOPPE S, ACCESSORIES A WHERE S.Id = A.Id AND Price >= 10000;

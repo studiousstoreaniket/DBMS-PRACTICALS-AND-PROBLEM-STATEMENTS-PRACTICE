@@ -1,0 +1,102 @@
+DROP DATABASE Library;
+
+CREATE DATABASE Library;
+
+USE Library;
+
+CREATE TABLE Sailors (
+sid INT PRIMARY KEY,
+sname VARCHAR(50),
+rating INT,
+age INT
+);
+
+CREATE TABLE Boats (
+bid INT PRIMARY KEY,
+bname VARCHAR(50),
+color VARCHAR(20)
+);
+
+CREATE TABLE Reserves (
+sid INT,
+bid INT,
+day DATE,
+PRIMARY KEY (sid, bid, day),
+FOREIGN KEY (sid) REFERENCES Sailors(sid),
+FOREIGN KEY (bid) REFERENCES Boats(bid)
+);
+
+INSERT INTO Sailors (sid, sname, rating, age)
+VALUES
+(1, 'Bob', 5, 25),
+(2, 'Alice', 3, 22),
+(3, 'Charlie', 4, 30),
+(4, 'David', 2, 28),
+(5, 'Eve', 4, 26);
+
+INSERT INTO Boats (bid, bname, color)
+VALUES
+(101, 'Boat A', 'red'),
+(102, 'Boat B', 'green'),
+(103, 'Boat C', 'blue'),
+(104, 'Boat D', 'red'),
+(105, 'Boat E', 'green');
+
+INSERT INTO Reserves (sid, bid, day)
+VALUES
+(1, 101, '2024-11-01'),
+(2, 102, '2024-11-02'),
+(3, 101, '2024-11-03'),
+(4, 103, '2024-11-04'),
+(5, 104, '2024-11-05'),
+(1, 104, '2024-11-05'),
+(2, 105, '2024-11-06'),
+(3, 102, '2024-11-07'),
+(4, 101, '2024-11-08'),
+(5, 101, '2024-11-09');
+
+SELECT * FROM Sailors
+WHERE sid IN (SELECT sid FROM Reserves WHERE bid = 101);
+
+SELECT b.bname
+FROM Boats b
+JOIN Reserves r ON b.bid = r.bid
+JOIN Sailors s ON s.sid = r.sid
+WHERE s.sname = 'Bob';
+
+SELECT s.sname
+FROM Sailors s
+JOIN Reserves r ON s.sid = r.sid
+JOIN Boats b ON b.bid = r.bid
+WHERE b.color = 'red'
+ORDER BY s.age;
+
+SELECT DISTINCT s.sname
+FROM Sailors s
+JOIN Reserves r ON s.sid = r.sid;
+
+SELECT r1.sid, s.sname
+FROM Reserves r1
+JOIN Reserves r2 ON r1.sid = r2.sid AND r1.day = r2.day AND r1.bid != r2.bid
+JOIN Sailors s ON s.sid = r1.sid;
+
+SELECT DISTINCT r.sid
+FROM Reserves r
+JOIN Boats b ON r.bid = b.bid
+WHERE b.color IN ('red', 'green');
+
+SELECT s.sname, s.age
+FROM Sailors s
+WHERE s.age = (SELECT MIN(age) FROM Sailors);
+
+SELECT COUNT(DISTINCT sname) AS distinct_sailor_names
+FROM Sailors;
+
+SELECT rating, AVG(age) AS avg_age
+FROM Sailors
+GROUP BY rating;
+
+SELECT rating, AVG(age) AS avg_age
+FROM Sailors
+GROUP BY rating
+HAVING COUNT(sid) >= 2;
